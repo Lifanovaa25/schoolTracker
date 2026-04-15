@@ -1,0 +1,82 @@
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+/* кнопка */
+.tab {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+  transform: translateY(0);
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* hover эффект */
+.tab:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+/* активная */
+.active {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* маленький “shine” эффект */
+.tab::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transform: skewX(-20deg);
+}
+
+.tab:hover::after {
+  animation: shine 0.6s ease;
+}
+
+@keyframes shine {
+  from {
+    left: -75%;
+  }
+  to {
+    left: 130%;
+  }
+}
+
+/* плавное появление табов */
+.tab {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

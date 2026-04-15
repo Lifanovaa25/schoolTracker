@@ -1,0 +1,11 @@
+
+.wrapper {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .card {
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--card);
+  }

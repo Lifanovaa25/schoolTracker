@@ -1,0 +1,81 @@
+.button {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  
+    font-weight: 500;
+    transition: all 0.2s ease;
+  
+    position: relative;
+    overflow: hidden;
+  
+    transform: translateY(0);
+  }
+  
+  /* hover lift */
+  .button:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* click animation */
+  .button:active {
+    transform: scale(0.96);
+  }
+  
+  /* shimmer */
+  .button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255, 255, 255, 0.25),
+      transparent
+    );
+    transform: skewX(-20deg);
+  }
+  
+  .button:hover::after {
+    animation: shine 0.6s ease;
+  }
+  
+  @keyframes shine {
+    to {
+      left: 130%;
+    }
+  }
+  
+  /* VARIANTS */
+  
+  .primary {
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+  
+  .primary:hover {
+    filter: brightness(1.05);
+  }
+  
+  .secondary {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  
+  .secondary:hover {
+    background: var(--border);
+  }
+  
+  .danger {
+    background: #ef4444;
+    color: white;
+  }
+  
+  .danger:hover {
+    background: #dc2626;
+  }

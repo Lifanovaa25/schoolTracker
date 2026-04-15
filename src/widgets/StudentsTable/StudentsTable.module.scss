@@ -1,0 +1,26 @@
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .row {
+    border-bottom: 1px solid var(--border);
+  
+    &:hover {
+      background: rgba(0, 0, 0, 0.03);
+    }
+  }
+  
+  .cell {
+    padding: 10px;
+  }
+  
+  .head {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    text-align: left;
+  }
