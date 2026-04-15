@@ -116,6 +116,10 @@ export default function Page() {
 
           loadData();
         }}
+        onUpdatePhone={async (studentId, phone) => {
+          await studentsService.updatePhone(studentId, phone);
+          loadData();
+        }}
       />
     </main>
   );

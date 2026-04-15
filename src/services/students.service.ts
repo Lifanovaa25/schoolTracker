@@ -9,4 +9,13 @@ export const studentsService = {
     if (error) throw error;
     return data;
   },
+
+  async updatePhone(studentId: string, mother_phone: string) {
+    const { error } = await supabase
+      .from("students")
+      .update({ mother_phone })
+      .eq("id", studentId);
+
+    if (error) throw error;
+  },
 };

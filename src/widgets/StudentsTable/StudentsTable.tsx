@@ -28,6 +28,7 @@ type Props = {
         amount: number;
         category: string;
     }) => void;
+    onUpdatePhone: (studentId: string, phone: string) => void | Promise<void>;
 };
 
 export default function StudentsTable({
@@ -36,9 +37,12 @@ export default function StudentsTable({
     activeCategory,
     onDeletePayment,
     onCreatePayment,
+    onUpdatePhone,
 }: Props) {
     const [selected, setSelected] = useState<string | null>(null);
     const [amount, setAmount] = useState("");
+    const [editingPhoneId, setEditingPhoneId] = useState<string | null>(null);
+    const [phoneValue, setPhoneValue] = useState("");
 
     const [openList, setOpenList] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -108,9 +112,54 @@ export default function StudentsTable({
                                 </td>
 
                                 <td className={styles.cell}>
-                                    <a href={`tel:${s.mother_phone}`}>
-                                        {s.mother_phone}
-                                    </a>
+                                    {editingPhoneId === s.id ? (
+                                        <div className={styles.phoneEdit}>
+                                            <input
+                                                value={phoneValue}
+                                                onChange={(event) =>
+                                                    setPhoneValue(
+                                                        event.target.value
+                                                    )
+                                                }
+                                                className="input"
+                                                placeholder="Телефон"
+                                            />
+                                            <Button
+                                                onClick={async () => {
+                                                    const nextPhone =
+                                                        phoneValue.trim();
+                                                    if (!nextPhone) return;
+                                                    await onUpdatePhone(
+                                                        s.id,
+                                                        nextPhone
+                                                    );
+                                                    setEditingPhoneId(null);
+                                                    setPhoneValue("");
+                                                }}
+                                            >
+                                                Сохранить
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className={styles.phoneView}>
+                                            <a href={`tel:${s.mother_phone}`}>
+                                                {s.mother_phone}
+                                            </a>
+                                            <button
+                                                className={styles.editPhoneBtn}
+                                                aria-label="Изменить телефон"
+                                                title="Изменить телефон"
+                                                onClick={() => {
+                                                    setEditingPhoneId(s.id);
+                                                    setPhoneValue(
+                                                        s.mother_phone ?? ""
+                                                    );
+                                                }}
+                                            >
+                                                ✏
+                                            </button>
+                                        </div>
+                                    )}
                                 </td>
 
                                 <td className={styles.cell}>
