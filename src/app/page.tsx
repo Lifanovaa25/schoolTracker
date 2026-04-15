@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import './styles/styles.scss';
+import "./styles/styles.scss";
+import AuthPage from "@/pages/AuthPage/AuthPage";
 
 type Student = {
   id: string;
@@ -22,6 +23,9 @@ type Payment = {
 };
 
 export default function Page() {
+  // 🔐 USER
+  const [user, setUser] = useState<any>(null);
+
   // 🌗 THEME
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
@@ -51,14 +55,31 @@ export default function Page() {
   const [students, setStudents] = useState<Student[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [balance, setBalance] = useState({ collected: 0, spent: 0 });
+  const [balance, setBalance] = useState({ collected: 0 });
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [amountInput, setAmountInput] = useState("");
 
+  // 🔐 AUTH
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+    };
+
+    getUser();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // 📊 LOAD DATA
   async function loadData() {
     const { data: studentsData } = await supabase.from("students").select("*");
     const { data: paymentsData } = await supabase.from("payments").select("*");
@@ -78,98 +99,118 @@ export default function Page() {
 
     if (paymentsData) setPayments(paymentsData);
 
-    setBalance({ collected, spent: 0 });
+    setBalance({ collected });
   }
 
   async function handlePay() {
-    if (!selectedStudent || !selectedCategory || !amountInput)
+    if (!selectedStudent || !amountInput)
       return alert("Заполните все поля");
 
     const amount = Number(amountInput);
-    if (isNaN(amount)) return alert("Введите корректное число");
+    if (isNaN(amount)) return alert("Введите число");
 
     await supabase.from("payments").insert({
       student_id: selectedStudent,
-      category: selectedCategory,
+      category: activeCategory,
       amount,
       date: new Date(),
     });
 
     setSelectedStudent(null);
-    setSelectedCategory(null);
     setAmountInput("");
     loadData();
   }
-  async function handleDelete(payment: Payment) {
-    const confirmDelete = confirm(`Удалить платеж ${payment.amount}₽ по категории "${payment.category}"?`);
-    if (!confirmDelete) return;
 
-    const { error } = await supabase
+  async function handleDelete(payment: Payment) {
+    if (!confirm(`Удалить ${payment.amount}₽?`)) return;
+
+    await supabase
       .from("payments")
       .delete()
       .eq("student_id", payment.student_id)
       .eq("category", payment.category)
       .eq("amount", payment.amount)
-      .limit(1); // удаляем только одну запись
+      .limit(1);
 
-    if (error) {
-      alert("Ошибка при удалении: " + error.message);
-    } else {
-      loadData(); // обновляем данные после удаления
-    }
+    loadData();
   }
+
   async function addCategory() {
-    const name = prompt("Название новой категории:");
+    const name = prompt("Название категории:");
     if (!name) return;
 
     if (categories.find((c) => c.name === name))
-      return alert("Такая категория уже существует");
+      return alert("Уже есть");
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("categories")
       .insert([{ name }])
       .select();
 
-    if (error) return alert("Ошибка: " + error.message);
-
     if (data && data.length > 0) {
       setCategories((prev) => [...prev, data[0]]);
-      if (!activeCategory) setActiveCategory(data[0].name);
     }
   }
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (user) loadData();
+  }, [user]);
 
-  // 🔥 синхронизация категории с вкладкой
-  useEffect(() => {
-    if (selectedStudent) {
-      setSelectedCategory(activeCategory);
-    }
-  }, [activeCategory]);
+  // 💰 категории
+  function getCategoryTotals() {
+    const totals: Record<string, number> = {};
+
+    payments.forEach((p) => {
+      if (!totals[p.category]) totals[p.category] = 0;
+      totals[p.category] += Number(p.amount);
+    });
+
+    return totals;
+  }
+
+  // 🔐 если не вошёл
+  if (!user) {
+    return <AuthPage />;
+  }
+
+  const categoryTotals = getCategoryTotals();
 
   return (
     <main className="container">
       <h1>Деньги класса</h1>
 
-      {/* 🌗 КНОПКА ТЕМЫ */}
       <button onClick={toggleTheme} className="button-secondary">
-        {theme === "light" ? "🌙 Тёмная тема" : "☀️ Светлая тема"}
+        {theme === "light" ? "🌙 Тёмная" : "☀️ Светлая"}
       </button>
 
-      {/* 💰 БАЛАНС */}
+      <button
+        className="button-secondary"
+        onClick={() => supabase.auth.signOut()}
+      >
+        Выйти
+      </button>
+
+      {/* 💰 ОБЩИЙ */}
       <div className="card">
-        <h2>Баланс: {balance.collected - balance.spent}₽</h2>
-        <p className="muted">Собрано: {balance.collected}₽</p>
-        <p className="muted">Потрачено: {balance.spent}₽</p>
+        <h2>Всего: {balance.collected}₽</h2>
+      </div>
+
+      {/* 💰 ПО КАТЕГОРИЯМ */}
+      <div className="card">
+        <h3>По категориям:</h3>
+
+        {Object.entries(categoryTotals).map(([cat, sum]) => (
+          <p key={cat}>
+            {cat}: {sum}₽
+          </p>
+        ))}
       </div>
 
       <button onClick={addCategory} className="button">
         Добавить категорию
       </button>
 
-      {/* 🧭 ВКЛАДКИ */}
+      {/* 🧭 */}
       <div className="tabs">
         {categories.map((c) => (
           <button
@@ -182,7 +223,7 @@ export default function Page() {
         ))}
       </div>
 
-      {/* 📊 ТАБЛИЦА */}
+      {/* 📊 */}
       <table className="table">
         <thead>
           <tr>
@@ -191,10 +232,10 @@ export default function Page() {
             <th>Мама</th>
             <th>Телефон</th>
             <th>Сумма</th>
-            <th>Категория</th>
             <th>Действие</th>
           </tr>
         </thead>
+
         <tbody>
           {students.map((s, index) => {
             const studentPayments = payments.filter(
@@ -203,13 +244,7 @@ export default function Page() {
                 p.category === activeCategory
             );
 
-            const allStudentPayments = payments.filter(
-              (p) => p.student_id === s.id
-            );
-
-            const alreadyPaidInActive = allStudentPayments.some(
-              (p) => p.category === activeCategory
-            );
+            const alreadyPaid = studentPayments.length > 0;
 
             return (
               <tr key={s.id}>
@@ -218,17 +253,15 @@ export default function Page() {
                 <td>{s.mother_name}</td>
                 <td>{s.mother_phone}</td>
 
-                {/* СУММА */}
                 <td>
                   {selectedStudent === s.id ? (
                     <input
                       type="number"
                       value={amountInput}
                       onChange={(e) => setAmountInput(e.target.value)}
-                      placeholder="Сумма"
                       className="input"
                     />
-                  ) : studentPayments.length > 0 ? (
+                  ) : alreadyPaid ? (
                     studentPayments.map((p, i) => (
                       <div key={i}>{p.amount}₽</div>
                     ))
@@ -237,43 +270,8 @@ export default function Page() {
                   )}
                 </td>
 
-                {/* КАТЕГОРИЯ */}
                 <td>
-                  {selectedStudent === s.id ? (
-                    <select
-                      value={selectedCategory || ""}
-                      onChange={(e) =>
-                        setSelectedCategory(e.target.value)
-                      }
-                      className="select"
-                    >
-                      <option value="">Выберите категорию</option>
-
-                      {categories
-                        .filter((c) => {
-                          const alreadyPaid = allStudentPayments.some(
-                            (p) => p.category === c.name
-                          );
-                          return !alreadyPaid;
-                        })
-                        .map((c) => (
-                          <option key={c.name} value={c.name}>
-                            {c.name}
-                          </option>
-                        ))}
-                    </select>
-                  ) : studentPayments.length > 0 ? (
-                    studentPayments.map((p, i) => (
-                      <div key={i}>{p.category}</div>
-                    ))
-                  ) : (
-                    "-"
-                  )}
-                </td>
-
-                {/* ДЕЙСТВИЕ */}
-                <td>
-                  {alreadyPaidInActive ? (
+                  {alreadyPaid ? (
                     <>
                       <span className="success">Оплачено</span>
                       <button
@@ -284,13 +282,14 @@ export default function Page() {
                       </button>
                     </>
                   ) : selectedStudent === s.id ? (
-                    <button onClick={handlePay} className="button">Сохранить</button>
+                    <button onClick={handlePay} className="button">
+                      Сохранить
+                    </button>
                   ) : (
                     <button
                       className="button"
                       onClick={() => {
                         setSelectedStudent(s.id);
-                        setSelectedCategory(activeCategory);
                         setAmountInput("");
                       }}
                     >
