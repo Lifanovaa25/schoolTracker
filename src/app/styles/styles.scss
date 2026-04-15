@@ -1,0 +1,129 @@
+@use "./variables";
+
+// RESET
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+// CONTAINER
+.container {
+  padding: 20px;
+  min-height: 100vh;
+}
+
+// CARD
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+// BUTTONS
+.button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--accent-text);
+  transition: 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.button-secondary {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--card);
+  color: var(--text);
+  transition: 0.2s;
+
+  &:hover {
+    background: var(--border);
+  }
+}
+
+// TABS
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.tab {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--card);
+  color: var(--text);
+  transition: 0.2s;
+
+  &:hover {
+    background: var(--border);
+  }
+
+  &.active {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+  }
+}
+
+// TABLE
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card);
+  border-radius: 12px;
+  overflow: hidden;
+
+  th,
+  td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  thead {
+    background: var(--bg);
+  }
+}
+
+// INPUTS
+.input,
+.select {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  outline: none;
+
+  &:focus {
+    border-color: var(--accent);
+  }
+}
+
+// TEXT
+.muted {
+  color: var(--muted);
+}
+
+// STATUS
+.success {
+  color: var(--success);
+}
