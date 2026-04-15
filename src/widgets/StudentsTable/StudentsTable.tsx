@@ -47,6 +47,10 @@ export default function StudentsTable({
     const [openList, setOpenList] = useState(false);
     const [copied, setCopied] = useState(false);
 
+    const sortedStudents = [...students].sort((a, b) =>
+        a.student_name.localeCompare(b.student_name, "ru")
+    );
+
     const getStudentPayments = (studentId: string) => {
         return payments.filter(
             (p) =>
@@ -55,7 +59,7 @@ export default function StudentsTable({
         );
     };
 
-    const paidStudents = students.filter((s) =>
+    const paidStudents = sortedStudents.filter((s) =>
         payments.some(
             (p) =>
                 p.student_id === s.id &&
@@ -67,13 +71,21 @@ export default function StudentsTable({
         .map((s, i) => `${i + 1}. ${s.student_name}`)
         .join("\n");
 
+    const savePhone = async (studentId: string) => {
+        const nextPhone = phoneValue.trim();
+        if (!nextPhone) return;
+        await onUpdatePhone(studentId, nextPhone);
+        setEditingPhoneId(null);
+        setPhoneValue("");
+    };
+
     return (
         <>
             <div className={styles.topBar}>
                 <div className={styles.stats}>
                     📊 Сдали:{" "}
                     <b>
-                        {paidStudents.length}/{students.length}
+                    {paidStudents.length}/{sortedStudents.length}
                     </b>
                 </div>
 
@@ -95,7 +107,7 @@ export default function StudentsTable({
                 </thead>
 
                 <tbody>
-                    {students.map((s, i) => {
+                    {sortedStudents.map((s, i) => {
                         const studentPayments = getStudentPayments(s.id);
                         const paid = studentPayments.length > 0;
 
@@ -121,23 +133,19 @@ export default function StudentsTable({
                                                         event.target.value
                                                     )
                                                 }
-                                                className="input"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === "Enter") {
+                                                        event.preventDefault();
+                                                        savePhone(s.id);
+                                                    }
+                                                }}
+                                                className={`input ${styles.phoneInput}`}
                                                 placeholder="Телефон"
                                             />
                                             <Button
-                                                onClick={async () => {
-                                                    const nextPhone =
-                                                        phoneValue.trim();
-                                                    if (!nextPhone) return;
-                                                    await onUpdatePhone(
-                                                        s.id,
-                                                        nextPhone
-                                                    );
-                                                    setEditingPhoneId(null);
-                                                    setPhoneValue("");
-                                                }}
+                                                onClick={() => savePhone(s.id)}
                                             >
-                                                Сохранить
+                                                ✓
                                             </Button>
                                         </div>
                                     ) : (

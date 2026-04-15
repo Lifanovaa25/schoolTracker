@@ -2,7 +2,31 @@
   display: flex;
   gap: 10px;
   margin: 20px 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  padding: 4px 2px 8px;
+}
+
+.tabs::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tabs::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+.tabs::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }
 
 /* кнопка */
@@ -71,6 +95,9 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  scroll-snap-align: start;
 }
 
 .close {

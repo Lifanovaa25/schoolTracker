@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { categoriesService } from "@/services/categories.service";
 import Button from "@/shared/ui/Button/Button";
 import Modal from "@/shared/ui/Modal/Modal";
@@ -39,6 +39,20 @@ export default function CategoryTabs({
     if (onCategoryDeleted) onCategoryDeleted(categoryToDelete);
     setCategoryToDelete(null);
   };
+
+  useEffect(() => {
+    if (!isDeleteOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        deleteCategory();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isDeleteOpen, categoryToDelete]);
 
   return (
     <>
@@ -83,6 +97,12 @@ export default function CategoryTabs({
         <input
           value={categoryName}
           onChange={(event) => setCategoryName(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              createCategory();
+            }
+          }}
           className={`input ${styles.modalInput}`}
           placeholder="Название категории"
         />
