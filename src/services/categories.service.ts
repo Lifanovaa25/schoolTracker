@@ -19,4 +19,9 @@ export const categoriesService = {
     if (error) throw error;
     return data?.[0];
   },
+
+  async remove(name: string) {
+    const { error } = await supabase.from("categories").delete().eq("name", name);
+    if (error) throw error;
+  },
 };

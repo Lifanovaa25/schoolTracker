@@ -53,7 +53,7 @@ export default function Page() {
       paymentsService.getAll(),
       categoriesService.getAll(),
     ]);
-  
+
     if (s) setStudents(s);
     if (p) setPayments(p);
     if (c) {
@@ -79,35 +79,44 @@ export default function Page() {
         categories={categories}
         active={activeCategory}
         onChange={setActiveCategory}
+        onCategoryCreated={(name: string) => {
+          loadData();
+          setActiveCategory(name);
+        }}
+        onCategoryDeleted={(name: string) => {
+          loadData();
+          const remaining = categories.filter((c) => c.name !== name);
+          setActiveCategory(remaining[0]?.name ?? null);
+        }}
       />
 
-<StudentsTable
-  students={students}
-  payments={payments}
-  activeCategory={activeCategory}
-  reload={loadData}
+      <StudentsTable
+        students={students}
+        payments={payments}
+        activeCategory={activeCategory}
 
-  onDeletePayment={async (payment) => {
-    await supabase
-      .from("payments")
-      .delete()
-      .eq("student_id", payment.student_id)
-      .eq("category", payment.category)
-      .eq("amount", payment.amount)
-      .limit(1);
 
-    loadData();
-  }}
+        onDeletePayment={async (payment) => {
+          await supabase
+            .from("payments")
+            .delete()
+            .eq("student_id", payment.student_id)
+            .eq("category", payment.category)
+            .eq("amount", payment.amount)
+            .limit(1);
 
-  onCreatePayment={async (data) => {
-    await supabase.from("payments").insert({
-      ...data,
-      date: new Date(),
-    });
+          loadData();
+        }}
 
-    loadData();
-  }}
-/>
+        onCreatePayment={async (data) => {
+          await supabase.from("payments").insert({
+            ...data,
+            date: new Date(),
+          });
+
+          loadData();
+        }}
+      />
     </main>
   );
 }

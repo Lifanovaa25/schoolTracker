@@ -1,25 +1,121 @@
 "use client";
 
+import { useState } from "react";
+import { categoriesService } from "@/services/categories.service";
+import Button from "@/shared/ui/Button/Button";
+import Modal from "@/shared/ui/Modal/Modal";
 import styles from "./CategoryTabs.module.scss";
 
 export default function CategoryTabs({
   categories,
   active,
   onChange,
+  onCategoryCreated,
+  onCategoryDeleted,
 }: any) {
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
+
+  const closeCreateModal = () => {
+    setIsCreateOpen(false);
+    setCategoryName("");
+  };
+
+  const createCategory = async () => {
+    const name = categoryName.trim();
+    if (!name) return;
+
+    await categoriesService.create(name);
+    closeCreateModal();
+    if (onCategoryCreated) onCategoryCreated(name);
+  };
+
+  const deleteCategory = async () => {
+    if (!categoryToDelete) return;
+    await categoriesService.remove(categoryToDelete);
+    setIsDeleteOpen(false);
+    if (onCategoryDeleted) onCategoryDeleted(categoryToDelete);
+    setCategoryToDelete(null);
+  };
+
   return (
-    <div className={styles.tabs}>
-      {categories.map((c: any) => (
-        <button
-          key={c.name}
-          onClick={() => onChange(c.name)}
-          className={`${styles.tab} ${
-            active === c.name ? styles.active : ""
-          }`}
-        >
-          {c.name}
+    <>
+      <div className={styles.tabs}>
+        <button className={styles.tab} onClick={() => setIsCreateOpen(true)}>
+          + Категория
         </button>
-      ))}
-    </div>
+        {categories.map((c: any) => (
+          <button
+            key={c.name}
+            onClick={() => onChange(c.name)}
+            className={`${styles.tab} ${active === c.name ? styles.active : ""}`}
+          >
+            <span>{c.name}</span>
+            <span
+              className={styles.close}
+              onClick={(event) => {
+                event.stopPropagation();
+                setCategoryToDelete(c.name);
+                setIsDeleteOpen(true);
+              }}
+            >
+              ×
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <Modal
+        isOpen={isCreateOpen}
+        title="Новая категория"
+        onClose={closeCreateModal}
+        actions={
+          <>
+            <Button variant="secondary" onClick={closeCreateModal}>
+              Отмена
+            </Button>
+            <Button onClick={createCategory}>Сохранить</Button>
+          </>
+        }
+      >
+        <input
+          value={categoryName}
+          onChange={(event) => setCategoryName(event.target.value)}
+          className={`input ${styles.modalInput}`}
+          placeholder="Название категории"
+        />
+      </Modal>
+
+      <Modal
+        isOpen={isDeleteOpen}
+        title="Удалить категорию"
+        onClose={() => {
+          setIsDeleteOpen(false);
+          setCategoryToDelete(null);
+        }}
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setIsDeleteOpen(false);
+                setCategoryToDelete(null);
+              }}
+            >
+              Отмена
+            </Button>
+            <Button variant="danger" onClick={deleteCategory}>
+              Удалить
+            </Button>
+          </>
+        }
+      >
+        <p>
+          Удалить категорию <b>{categoryToDelete}</b>?
+        </p>
+      </Modal>
+    </>
   );
 }
