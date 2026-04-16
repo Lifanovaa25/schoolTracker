@@ -11,24 +11,12 @@ import StudentsTable from "@/widgets/StudentsTable/StudentsTable";
 import { categoriesService } from "@/services/categories.service";
 import { paymentsService } from "@/services/payments.service";
 import { studentsService } from "@/services/students.service";
-type Student = {
-  id: string;
-  student_name: string;
-  mother_name: string;
-  mother_phone: string;
-};
-
-type Category = {
-  name: string;
-};
-
-type Payment = {
-  student_id: string;
-  amount: number;
-  category: string;
-};
+import type { User } from "@supabase/supabase-js";
+import type { Student } from "@/entities/student/model/types";
+import type { Category } from "@/entities/category/model/types";
+import type { Payment } from "@/entities/payment/model/types";
 export default function Page() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const [students, setStudents] = useState<Student[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);

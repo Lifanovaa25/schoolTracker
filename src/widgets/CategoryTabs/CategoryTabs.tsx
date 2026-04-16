@@ -5,6 +5,15 @@ import { categoriesService } from "@/services/categories.service";
 import Button from "@/shared/ui/Button/Button";
 import Modal from "@/shared/ui/Modal/Modal";
 import styles from "./CategoryTabs.module.scss";
+import type { Category } from "@/entities/category/model/types";
+
+type Props = {
+  categories: Category[];
+  active: string | null;
+  onChange: (name: string) => void;
+  onCategoryCreated?: (name: string) => void;
+  onCategoryDeleted?: (name: string) => void;
+};
 
 export default function CategoryTabs({
   categories,
@@ -12,7 +21,7 @@ export default function CategoryTabs({
   onChange,
   onCategoryCreated,
   onCategoryDeleted,
-}: any) {
+}: Props) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [categoryName, setCategoryName] = useState("");
@@ -60,7 +69,7 @@ export default function CategoryTabs({
         <button className={styles.tab} onClick={() => setIsCreateOpen(true)}>
           + Категория
         </button>
-        {categories.map((c: any) => (
+        {categories.map((c) => (
           <button
             key={c.name}
             onClick={() => onChange(c.name)}

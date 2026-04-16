@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { Payment } from "@/entities/payment/model/types";
 
 export const paymentsService = {
   async getAll() {
@@ -7,14 +8,10 @@ export const paymentsService = {
       .select("*");
 
     if (error) throw error;
-    return data;
+    return (data ?? []) as Payment[];
   },
 
-  async create(payload: {
-    student_id: string;
-    category: string;
-    amount: number;
-  }) {
+  async create(payload: Payment) {
     const { error } = await supabase.from("payments").insert({
       ...payload,
       date: new Date(),
@@ -23,11 +20,7 @@ export const paymentsService = {
     if (error) throw error;
   },
 
-  async remove(payment: {
-    student_id: string;
-    category: string;
-    amount: number;
-  }) {
+  async remove(payment: Payment) {
     const { error } = await supabase
       .from("payments")
       .delete()

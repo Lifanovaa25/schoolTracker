@@ -1,13 +1,18 @@
 "use client";
 
 import styles from "./Balance.module.scss";
+import type { Payment } from "@/entities/payment/model/types";
 
-export default function Balance({ payments }: any) {
-  const total = payments.reduce((s: number, p: any) => s + p.amount, 0);
+type Props = {
+  payments: Payment[];
+};
+
+export default function Balance({ payments }: Props) {
+  const total = payments.reduce((s, p) => s + p.amount, 0);
 
   const byCategory: Record<string, number> = {};
 
-  payments.forEach((p: any) => {
+  payments.forEach((p) => {
     if (!byCategory[p.category]) byCategory[p.category] = 0;
     byCategory[p.category] += p.amount;
   });

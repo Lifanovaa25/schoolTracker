@@ -4,19 +4,8 @@ import { useState } from "react";
 import styles from "./StudentsTable.module.scss";
 import Button from "@/shared/ui/Button/Button";
 import Modal from "@/shared/ui/Modal/Modal";
-
-type Student = {
-    id: string;
-    student_name: string;
-    mother_name: string;
-    mother_phone: string;
-};
-
-type Payment = {
-    student_id: string;
-    amount: number;
-    category: string;
-};
+import type { Student } from "@/entities/student/model/types";
+import type { Payment } from "@/entities/payment/model/types";
 
 type Props = {
     students: Student[];

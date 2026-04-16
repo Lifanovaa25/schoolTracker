@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { Category } from "@/entities/category/model/types";
 
 export const categoriesService = {
   async getAll() {
@@ -7,7 +8,7 @@ export const categoriesService = {
       .select("*");
 
     if (error) throw error;
-    return data;
+    return (data ?? []) as Category[];
   },
 
   async create(name: string) {
@@ -17,7 +18,7 @@ export const categoriesService = {
       .select();
 
     if (error) throw error;
-    return data?.[0];
+    return data?.[0] as Category | undefined;
   },
 
   async remove(name: string) {

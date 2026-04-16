@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { Student } from "@/entities/student/model/types";
 
 export const studentsService = {
   async getAll() {
@@ -7,7 +8,7 @@ export const studentsService = {
       .select("*");
 
     if (error) throw error;
-    return data;
+    return (data ?? []) as Student[];
   },
 
   async updatePhone(studentId: string, mother_phone: string) {
