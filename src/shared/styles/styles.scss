@@ -4,9 +4,11 @@
 * {
   box-sizing: border-box;
 }
+
 html {
   transition: background 0.3s ease, color 0.3s ease;
 }
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -109,14 +111,20 @@ body {
 .input,
 .select {
   padding: 6px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
+  // border-radius: 6px;
+  border: none;
+  border-bottom: 1px solid var(--border);
   background: var(--card);
   color: var(--text);
   outline: none;
+  width: 80%;
+  outline: none;
+  max-width: 107px;
+  box-shadow: none;
 
   &:focus {
-    border-color: var(--accent);
+    // border-color: var(--accent);
+    border: none;
   }
 }
 

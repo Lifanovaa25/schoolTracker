@@ -19,7 +19,9 @@
 
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-
+    &:nth-child(5) {
+        min-width: 100px;
+    } 
     @media (max-width: 500px) {
         padding: 8px 10px;
 
@@ -41,7 +43,15 @@
 .cell {
     padding: 12px 14px;
     border-bottom: 1px solid var(--border);
-
+    &:nth-child(2),&:nth-child(3) {
+        max-width: 131px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-wrap: nowrap;
+    }
+    &:nth-child(5) {
+        min-width: 100px;
+    } 
     @media (max-width: 500px) {
         padding: 8px 10px;
         font-size: 14px;
@@ -159,3 +169,23 @@
         display: inline;
     }
 }
+.checkSvg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    fill: none;
+  }
+  
+  .checkPath {
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+  
+    animation: drawCheck 0.4s ease forwards;
+  }
+  
+  @keyframes drawCheck {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
