@@ -2,65 +2,85 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-  
+
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 14px;
-  
+
     overflow: hidden;
-  }
-  
-  .head {
+}
+
+.head {
     padding: 12px 14px;
     text-align: left;
-  
+
     font-size: 13px;
     font-weight: 600;
-  
+
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-  }
-  
-  .row {
-    transition: 0.2s;
-  
-    &:hover {
-      background: rgba(0, 0, 0, 0.03);
+
+    @media (max-width: 500px) {
+        padding: 8px 10px;
+
+        &:nth-child(3),
+        &:nth-child(4) {
+            display: none;
+        }
     }
-  }
-  
-  .cell {
+}
+
+.row {
+    transition: 0.2s;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.03);
+    }
+}
+
+.cell {
     padding: 12px 14px;
     border-bottom: 1px solid var(--border);
-  }
-  
-  .actions {
+
+    @media (max-width: 500px) {
+        padding: 8px 10px;
+        font-size: 14px;
+
+        &:nth-child(3),
+        &:nth-child(4) {
+            display: none;
+        }
+    }
+}
+
+.actions {
     display: flex;
     gap: 8px;
     align-items: center;
-  }
+    flex-direction: column;
+}
 
-  .phoneView {
+.phoneView {
     display: flex;
     align-items: center;
     gap: 8px;
-  }
+}
 
-  .phoneEdit {
+.phoneEdit {
     display: flex;
     align-items: center;
     gap: 8px;
-  }
+}
 
-  .phoneInput {
+.phoneInput {
     min-width: 150px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--bg);
     padding: 8px 10px;
-  }
+}
 
-  .editPhoneBtn {
+.editPhoneBtn {
     border: none;
     background: transparent;
     color: #fff;
@@ -70,40 +90,72 @@
     padding: 2px 6px;
     border-radius: 999px;
     transform: rotate(130deg);
-  }
-  
-  /* 📊 TOP */
-  .topBar {
+}
+
+/* 📊 TOP */
+.topBar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  
+
     margin-bottom: 12px;
-  }
-  
-  .stats {
+}
+
+.stats {
     font-size: 14px;
-  }
-  
-  .subtitle {
+}
+
+.subtitle {
     font-size: 13px;
     opacity: 0.7;
     margin-bottom: 10px;
-  }
-  
-  .list {
+}
+
+.list {
     white-space: pre-line;
-  
+
     font-size: 14px;
     line-height: 1.6;
-  
+
     background: var(--bg);
     border: 1px solid var(--border);
-  
+
     padding: 12px;
     border-radius: 10px;
-  
+
     max-height: 300px;
     overflow: auto;
+}
+
+.paid {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #16a34a;
+    font-weight: 500;
+}
+
+.paidIcon {
+    font-size: 16px;
+}
+.paidIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
+  .paidIcon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+.paidText {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .paidText {
+        display: inline;
+    }
+}

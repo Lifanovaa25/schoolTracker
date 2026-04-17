@@ -74,7 +74,7 @@ export default function StudentsTable({
                 <div className={styles.stats}>
                     📊 Сдали:{" "}
                     <b>
-                    {paidStudents.length}/{sortedStudents.length}
+                        {paidStudents.length}/{sortedStudents.length}
                     </b>
                 </div>
 
@@ -184,9 +184,26 @@ export default function StudentsTable({
                                     <div className={styles.actions}>
                                         {paid ? (
                                             <>
-                                                <span className="success">
-                                                    ✔ оплачено
-                                                </span>
+                                                <div className={styles.paid}>
+                                                    <span className={styles.paidIcon}>
+                                                        <svg
+                                                            viewBox="0 0 24 24"
+                                                            width="16"
+                                                            height="16"
+                                                            fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                            <path
+                                                                d="M20 6L9 17L4 12"
+                                                                stroke="currentColor"
+                                                                strokeWidth="2.5"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                            />
+                                                        </svg>
+                                                    </span>
+                                                    <span className={styles.paidText}>оплачено</span>
+                                                </div>
 
                                                 <Button
                                                     variant="danger"
